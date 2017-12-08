@@ -1,6 +1,7 @@
 package com.thingple.version.components;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.thingple.json.JsonConvertor;
 import com.thingple.rest.RestClient;
@@ -25,20 +26,22 @@ public class ComponentsHandler {
 
     public void getGlobalConfig(final AppInfoListener listener) {
         GlobalKeyHandler globalKeyHandler = new GlobalKeyHandler();
-        UUID uuid = globalKeyHandler.get();
-        if (uuid != null && uuid.uuid != null) {
-            final String uri = uuid.uri;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+        final UUID uuid = globalKeyHandler.get();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AppInfo info = null;
+                try {
                     Map<String, String> params = new HashMap();
-                    String text = RestClient.newInstance().get(uri, params);
-                    final AppInfo info = JsonConvertor.convert2Object(text, AppInfo.class);
-                    if (listener != null) {
-                        listener.onData(info);
-                    }
+                    String text = RestClient.newInstance().get(uuid.uri, params);
+                    info = JsonConvertor.convert2Object(text, AppInfo.class);
+                } catch (Exception e) {
+                    Log.e("#getGlobalConfig", e.getMessage(), e);
                 }
-            }).start();
-        }
+                if (listener != null) {
+                    listener.onListener(uuid, info);
+                }
+            }
+        }).start();
     }
 }
