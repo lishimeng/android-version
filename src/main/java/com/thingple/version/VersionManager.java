@@ -6,9 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 
-
 import com.thingple.version.components.AppComponent;
-import com.thingple.version.components.AppInfo;
 import com.thingple.version.components.AppInfoListener;
 import com.thingple.version.components.ComponentsHandler;
 
@@ -49,39 +47,28 @@ public class VersionManager {
         }
     }
 
-    public void update() {
+    public void getUpdateInfo(AppInfoListener listener) {
         installing = false;
         ComponentsHandler componentsHandler = new ComponentsHandler(context);
-        componentsHandler.getGlobalConfig(new AppInfoListener() {
-            @Override
-            public void onData(AppInfo appInfo) {
-                if (appInfo != null) {
-                    Log.d(TAG, "get latest config");
-                    String uuid = appInfo.uuid;
-                    Log.d(TAG, "uuid:" + uuid);
-                    Map<String, String> settings = appInfo.settings;
-                    if (settings != null) {
-                        Log.d(TAG, "print settings:");
-                        for (String key : settings.keySet()) {
-                            Log.d(TAG, key + ":" + settings.get(key));
-                        }
-                    }
-                    List<AppComponent> components = appInfo.components;
-                    if (components != null) {
-                        Log.d(TAG, "print components:");
-                        for (AppComponent component : components) {
-                            String packageName = component.packageName;
-                            int version = component.version;
-                            Log.d(TAG, packageName + ":" + version);
-                            Version currentVersion = getVersion(getPackage(packageName));
-                            if (currentVersion == null || currentVersion.versionCode < version) {
-                                download(component);
-                            }
-                        }
-                    }
-                }
+        componentsHandler.getGlobalConfig(listener);
+    }
+
+    public void updateComponents(List<AppComponent> components) {
+        if (components != null) {
+            for (AppComponent component : components) {
+                updateComponent(component);
             }
-        });
+        }
+    }
+
+    private void updateComponent(AppComponent component) {
+        String packageName = component.packageName;
+        int version = component.version;
+        Log.d(TAG, packageName + ":" + version);
+        Version currentVersion = getVersion(getPackage(packageName));
+        if (currentVersion == null || currentVersion.versionCode < version) {
+            download(component);
+        }
     }
 
     /**
