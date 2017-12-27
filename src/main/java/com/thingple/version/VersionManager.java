@@ -121,9 +121,9 @@ public class VersionManager {
 
     public void download(AppComponent app) {
         packageCacke.put(app.packageName, app);
-        String title = "download component";
-        String desc = "downloading " + app.name;
-        long downloadId = applicationHandler.download(app.uri, title, desc, app.name);
+        String title = app.packageName;
+        String desc = "downloading " + app.appName;
+        long downloadId = applicationHandler.download(app.uri, title, desc, app.appName);
         downloadList.put(downloadId, app.packageName);
     }
 

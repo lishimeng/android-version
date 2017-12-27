@@ -51,7 +51,8 @@ class ApplicationHandler {
         req.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
         req.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         //file:///storage/emulated/0/Android/data/your-package/files/Download/update.apk
-        req.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, appName+".apk");
+        //req.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, appName+".apk");
+        req.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, appName+".apk");
 
         // 设置一些基本显示信息
         req.setTitle(title);

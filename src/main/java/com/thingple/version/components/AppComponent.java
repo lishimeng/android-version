@@ -15,7 +15,12 @@ public class AppComponent {
     /**
      * 文件名[file name]
      */
-    public String name;
+    public String fileName;
+
+    /**
+     * 文件名[app name]
+     */
+    public String appName;
 
     /**
      * uri
