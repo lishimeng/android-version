@@ -1,6 +1,7 @@
 package com.thingple.library.version;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -121,11 +122,18 @@ public class VersionManager {
     }
 
     public void download(AppComponent app) {
-        packageCacke.put(app.packageName, app);
-        String title = app.packageName;
-        String desc = "downloading " + app.appName;
-        long downloadId = applicationHandler.download(app.uri, title, desc, app.appName);
-        downloadList.put(downloadId, app.packageName);
+//        packageCacke.put(app.packageName, app);
+//        String title = app.packageName;
+//        String desc = "downloading " + app.appName;
+//        long downloadId = applicationHandler.download(app.uri, title, desc, app.appName);
+//        downloadList.put(downloadId, app.packageName);
+
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(app.uri);
+        intent.setData(content_url);
+        intent.setClassName("com.android.browser","com.android.browser.BrowserActivity");
+        context.startActivity(intent);
     }
 
     private void installApp() {
