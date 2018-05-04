@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,12 +28,8 @@ public class DowndloadReceiver extends BroadcastReceiver {
             Cursor c = manager.query(query);
             if(c.moveToFirst()) {
                 //获取文件下载路径
-                String filename = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME));
-
-                if(filename != null){
-                    Toast.makeText(context, "下载:" + filename, Toast.LENGTH_SHORT).show();
-                    Log.d("Download", "下载:" + filename);
-                    Uri uri = Uri.fromFile(new File(filename));
+                Uri uri = getDownloadFile(context, c);
+                if (uri != null) {
                     VersionManager.shareInstance().onAppDownloaded(id, uri);
                 }
             }
@@ -42,5 +39,25 @@ public class DowndloadReceiver extends BroadcastReceiver {
             manager.remove(ids);
             Toast.makeText(context, "已经取消下载", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private Uri getDownloadFile(Context context, Cursor c) {
+        int fileUriIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+        String fileUri = c.getString(fileUriIdx);
+        String filename = null;
+        Uri uri = null;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            if (fileUri != null) {
+                uri = Uri.parse(fileUri);
+            }
+        } else {
+            int fileNameIdx = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_FILENAME);
+            filename = c.getString(fileNameIdx);
+            uri = Uri.fromFile(new File(filename));
+        }
+
+        Toast.makeText(context, "下载:" + filename, Toast.LENGTH_SHORT).show();
+        Log.d("Download", "下载:" + filename);
+        return uri;
     }
 }
